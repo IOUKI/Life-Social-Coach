@@ -50,13 +50,11 @@ export async function GET(req: NextRequest) {
 
           // 選項：讀取檔案內容 (若檔案不大，可直接讀取內容回傳)
           const filePath = path.join(dataDir, file);
-          const content = await fs.readFile(filePath, "utf-8");
 
           return {
             fileName: file,
             name: name,
             id: id,
-            content: content, // 將內容也回傳前端
             createdAt: fs.stat(filePath).then(stats => stats.birthtime) // 取得建立時間
           };
         })
@@ -94,7 +92,7 @@ export async function POST(req: NextRequest) {
   try {
     // 1. 解析請求內容
     const body = await req.json();
-    const { characterName, content } = body;
+    const { characterName } = body;
 
     // 基本驗證
     if (!characterName) {
@@ -123,9 +121,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 5. 準備寫入檔案的內容
-    const fileContent = content
-      ? content
-      : JSON.stringify(body, null, 2);
+    const fileContent = `${characterName} 角色資訊`;
 
     // 6. 寫入檔案
     await fs.writeFile(filePath, fileContent, "utf-8");
