@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     const classifyPrompt = `
     訊息：「${message}」
 
-    請判斷以上訊息內容是否為「人物角色屬性敘述、背景設定修改或添加」，請回答 yes or no。`
+    請判斷以上訊息內容是否為「人物角色屬性敘述、背景設定修改或添加」，請回答 yes or no。`;
     // (例如：「他喜歡吃蘋果」、「他的個性很冷酷」是 yes。「你好嗎」、「講個笑話」是 no)`;
 
     const classifyResult = await callGemini(classifyPrompt);
@@ -84,10 +84,6 @@ export async function POST(req: NextRequest) {
       【使用者的新增/修改指令】：
       ${message}
 
-      請將使用者的指令與現有文件融合，生成一份「更新後、條理分明」的角色設定文字檔內容。
-      請保留舊有的重要資訊，並自然地加入新設定。
-      直接輸出新的文件內容即可，不要有多餘的對話。
-
       【文件範例】：
       xxx 角色資訊
       喜好：
@@ -104,6 +100,11 @@ export async function POST(req: NextRequest) {
 
       工作單位：台積電設備工程師
       ... (依此類推)
+
+      請將使用者的指令與現有文件融合，生成一份「更新後、條理分明」的角色設定文字檔內容。
+      請依照文件範例生成角色資訊。
+      請保留舊有的重要資訊，並自然地加入新設定。
+      直接輸出新的文件內容即可，不要有多餘的對話。
       `;
 
       const newContent = await callGemini(updatePrompt);
