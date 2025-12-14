@@ -5,7 +5,7 @@ import fs from "fs/promises";
 import path from "path";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
 // 輔助函式：呼叫 Gemini API
 async function callGemini(prompt: string, systemInstruction: string = "") {
@@ -19,12 +19,19 @@ async function callGemini(prompt: string, systemInstruction: string = "") {
 
   const response = await fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "X-goog-api-key": GEMINI_API_KEY
+    },
     body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
     const errorData = await response.json();
+    // 檢查是否為配額錯誤 (429)
+    if (response.status === 429 || errorData.error?.message?.includes('quota')) {
+      throw new Error("系統忙碌中 (API 配額已滿)，請稍後再試。");
+    }
     throw new Error(errorData.error?.message || "Gemini API Error");
   }
 
@@ -120,15 +127,15 @@ export async function POST(req: NextRequest) {
       // STEP 2-B (NO): 一般聊天回覆
       // ==========================================
       const chatPrompt = `
-      請扮演以下角色與使用者對話。
+      請根據角色設定的內容提供使用者問題解答與建議。
+      請給最多三個建議的回答。
+      最後給使用者最滿意的解答或建議。
 
       【角色設定】：
       ${currentContent}
 
       【使用者訊息】：
       ${message}
-
-      請根據角色設定的內容提供使用者問題建議。
       `;
 
       reply = await callGemini(chatPrompt);
