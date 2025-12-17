@@ -5,9 +5,9 @@ import { Send, User, Trash2, Plus, MessageSquare, Settings, ArrowLeft } from 'lu
 
 // --- 引入 Markdown 渲染庫 ---
 import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm'; 
-import rehypeRaw from 'rehype-raw'; 
-import { Components, CodeProps } from 'react-markdown'; // 引入 Components 型別
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import { Components } from 'react-markdown'; // 引入 Components 型別
 
 // --- 型別定義 ---
 interface Character {
@@ -29,16 +29,16 @@ const getStorageKey = (charId: string): string => `chat_history_${charId}`;
 // --- Markdown 元件的客製化樣式 (使用 Components 型別) ---
 const markdownComponents: Components = {
   // 段落樣式調整，確保文本換行正常
-  p: ({ children }) => <p className="mb-2 last:mb-0 whitespace-pre-wrap">{children}</p>, 
+  p: ({ children }) => <p className="mb-2 last:mb-0 whitespace-pre-wrap">{children}</p>,
   // 清單樣式調整
   ul: ({ children }) => <ul className="list-disc list-inside ml-4 my-2">{children}</ul>,
   ol: ({ children }) => <ol className="list-decimal list-inside ml-4 my-2">{children}</ol>,
   li: ({ children }) => <li className="mb-1">{children}</li>,
   // 程式碼區塊樣式調整
-  code: ({ node, inline, className, children, ...props }) => {
+  code: ({ node, className, children, ...props }) => {
     const match = /language-(\w+)/.exec(className || '');
     // 針對程式碼區塊 (非行內)
-    if (!inline && match) {
+    if (match) {
       return (
         <pre className="bg-gray-800 p-3 rounded-lg text-xs overflow-x-auto my-2 text-white">
           <code className={`language-${match[1]}`} {...props}>
@@ -95,7 +95,7 @@ export default function Home() {
         : '/api/characterInfo';
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch');
-      const data: { characters: Character[] } = await response.json();
+      const data: { characters: Character[]; } = await response.json();
       setCharacters(data.characters || []);
     } catch (error) {
       console.error("Fetch error:", error);
@@ -173,7 +173,7 @@ export default function Home() {
       });
 
       if (!response.ok) throw new Error('API Error');
-      const data: { reply: string, isUpdate?: boolean } = await response.json();
+      const data: { reply: string, isUpdate?: boolean; } = await response.json();
 
       // 3. 處理回應
       const replyMsg: ChatMessage = {
@@ -230,7 +230,7 @@ export default function Home() {
         }]);
       }
     } else {
-        setMessages([]); // 清空訊息
+      setMessages([]); // 清空訊息
     }
   }, [selectedChar]);
 
@@ -404,7 +404,7 @@ export default function Home() {
                           {msg.content}
                         </ReactMarkdown>
                       )}
-                      
+
                       <div className={`text-[10px] mt-1 text-right ${isUser ? 'text-blue-200' : 'text-gray-400'}`}>
                         {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </div>
