@@ -1,0 +1,10 @@
+services:
+  next-app:
+    build:
+      context: .
+      args:
+        - GEMINI_API_KEY=${GEMINI_API_KEY} # 傳遞給 Dockerfile 中的 ARG
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env # 運行時自動從本地 .env 讀取並帶入 container
