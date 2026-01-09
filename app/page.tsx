@@ -221,9 +221,9 @@ export default function Home() {
           content: `你好，我是 **${selectedChar.name}** 社交建議教練。
 
 我可以幫助你：
+* **紀錄角色資訊** (例如：輸入「XXX 喜歡吃甜點」 or 「XXX 2000/02/25 生日」)
 * **分析對話**
 * **提供建議**
-* **調整個性** (例如：輸入 '設定他更熱情')
 
 試著跟我聊聊吧！`,
           timestamp: Date.now()
@@ -361,9 +361,9 @@ export default function Home() {
                   <p className="text-xs text-gray-400 hidden md:block">您可以直接對話，或輸入「設定他喜歡...」來修改設定</p>
                 </div>
               </div>
-              <div className="text-gray-400">
+              {/* <div className="text-gray-400">
                 <Settings className="w-5 h-5 hover:text-gray-600 cursor-pointer" />
-              </div>
+              </div> */}
             </div>
 
             {/* Messages Area */}
